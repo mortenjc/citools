@@ -10,7 +10,7 @@ function errexit()
 
 git clone https://www.github.com/mortenjc/citest.git || errexit "unable to clone citest.git"
 
-cd citest
+pushd citest
 make clean
 
 for script in $SCRIPTS
@@ -18,3 +18,5 @@ do
     echo Running script $script
     ../jenkins/done/$script || errexit $done
 done
+
+popd

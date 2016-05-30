@@ -14,7 +14,6 @@ function errexit()
 #
 #
 #
-
 $BANNER Fetch
 git fetch
 
