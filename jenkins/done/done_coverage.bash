@@ -44,4 +44,6 @@ if [ "$(echo $COV '>' $MINCOV | bc -l)" -eq 0 ];then
    errexit "Minimum coverage of $MINCOV % not met (got $COV %)"
 fi
 
+$BANNER COV:${COV}%
+
 $BANNER DONE
