@@ -16,7 +16,7 @@ function errexit()
 $BANNER Doxygen 
 
 cd $WORKSPACE
-doxygen doxygen/doxyfile testproject || errexit "doxygen failed"
+doxygen doxygen/dox.dox testproject || errexit "doxygen failed"
 
 #
 #
