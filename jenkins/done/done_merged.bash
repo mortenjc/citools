@@ -25,8 +25,6 @@ git checkout mjcdev || errexit "cant change to devmjc branch"
 
 
 $BANNER Compare 
-git diff master > mydiff
-
-test -s mydiff && errexit "branch mjcdev not merged with master"
+git merge master | grep "Already up-to-date" || errexit "branch is not merged from master"
 
 $BANNER DONE
