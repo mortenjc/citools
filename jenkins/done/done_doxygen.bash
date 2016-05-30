@@ -15,12 +15,12 @@ function errexit()
 #
 $BANNER Doxygen 
 
-cd $WORKSPACE
-doxygen doxygen/config.dox citest || errexit "doxygen failed"
+pushd $WORKSPACE/citest
+doxygen $WORKSPACE/citools/config.dox . || errexit "doxygen failed"
 
 #
 #
 test -s doxygenerrors.log && errexit "doxygen errors were generated"
 
-
+popd
 $BANNER DONE
