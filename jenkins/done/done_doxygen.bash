@@ -16,7 +16,7 @@ function errexit()
 $BANNER Doxygen 
 
 pushd $WORKSPACE/citest
-doxygen $WORKSPACE/citools/config.dox . || errexit "doxygen failed"
+doxygen ../doxygen/config.dox . || errexit "doxygen failed"
 
 #
 #
