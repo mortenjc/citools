@@ -8,7 +8,9 @@ function errexit()
     exit 1
 }
 
-cd testproject
+git clone https://www.github.com/mortenjc/citest.git || errexit "unable to clone citest.git"
+
+cd citest
 make clean
 
 for script in $SCRIPTS
