@@ -20,7 +20,7 @@ function helptext()
    echo 
    echo "ec2 commands"
    echo "  ec2list              list available instances"
-   echo "  ec2run               list available instances"
+   echo "  ec2run keys          run a t2.micro instance with specified keys"
    echo "  ec2stop instance     stop a running instance"
    echo "  ec2delete instance   delete a stopped instance"
 
@@ -69,8 +69,8 @@ case $awscmd in
   ;;
 
 "ec2run")
-  argcheck $arg2
-  aws ec2 run-instances --image-id ami-f5f41398 --count 1 --key-name $arg2  --instance-type t2.micro --subnet-id subnet-7889a045
+  argcheck $arg
+  aws ec2 run-instances --image-id ami-f5f41398 --count 1 --key-name $arg  --instance-type t2.micro --subnet-id subnet-7889a045
   ;;
 
 "ec2stop")
