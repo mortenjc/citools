@@ -20,6 +20,7 @@ class AWShell(cmd.Cmd):
       subprocess.call(["aws", "s3api", "delete-bucket", "--bucket", arg])
 
    def do_quit(self, arg):
+      'Quit the shell'
       sys.exit(0)
 
 if __name__ == '__main__':
