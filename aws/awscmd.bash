@@ -16,10 +16,13 @@ function argcheck()
 function helptext()
 {
    echo "s3 commands"
-   echo "  s3dir    bucket      list entries in a bucket"
+   echo "  s3ls     bucket      list entries in a bucket"
+   echo "  s3cp     src dst     copy files to and from s3 path"
+   echo "  s3rm     file        delete file (s3 path)"
    echo "  s3list               lists the user\'s buckets"
    echo "  s3create bucket      creates a new bucket" 
    echo "  s3delete bucket      deletes bucket with content"
+   echo "  Filepaths must be of the form s3://bucket/file"
    echo 
    echo "ec2 commands"
    echo "  ec2list              list available instances"
@@ -37,9 +40,9 @@ case $awscmd in
   aws s3api list-buckets
   ;;
 
-"s3dir")
+"s3ls")
   argcheck $arg
-  aws s3 ls s3://$arg
+  aws s3 ls $arg
   ;;
 
 "s3create")
@@ -47,9 +50,20 @@ case $awscmd in
   aws s3api create-bucket --acl private --bucket $arg
   ;;
 
+"s3cp")
+  argcheck $arg
+  argcheck $arg2
+  aws s3 cp $arg $arg2
+  ;;
+
+"s3rm")
+  argcheck $arg
+  aws s3 rm $arg
+  ;;
+
 "s3delete")
   argcheck $arg
-  aws s3 rm s3://$arg --recursive
+  aws s3 rm $arg --recursive
   aws s3api delete-bucket --bucket $arg
   ;;
 
