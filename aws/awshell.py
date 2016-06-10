@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import cmd, sys
+import cmd, sys, subprocess
 
 class AWShell(cmd.Cmd):
    intro = "AWS Shell"
@@ -9,7 +9,10 @@ class AWShell(cmd.Cmd):
 
    def do_s3list(self, arg):
       'List all buckets'
-      print("Call s3list")
+      subprocess.call(["aws", "s3api",  "list-buckets"])
+
+   def do_quit(self, arg):
+      sys.exit(0)
 
 if __name__ == '__main__':
    AWShell().cmdloop()
