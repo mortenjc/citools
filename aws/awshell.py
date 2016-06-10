@@ -11,6 +11,14 @@ class AWShell(cmd.Cmd):
       'List all buckets'
       subprocess.call(["aws", "s3api",  "list-buckets"])
 
+   def do_s3create(self, arg):
+      'Create an S3 bucket by name'
+      subprocess.call(["aws", "s3api", "create-bucket", "--acl",  "private", "--bucket", arg])
+
+   def do_s3delete(self, arg):
+      'Delete an S3 bucket by name'
+      subprocess.call(["aws", "s3api", "delete-bucket", "--bucket", arg])
+
    def do_quit(self, arg):
       sys.exit(0)
 
