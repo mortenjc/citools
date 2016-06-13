@@ -64,6 +64,12 @@ class AWShell(cmd.Cmd):
       output = os.popen(line).read()
       print output
 
+   def do_EOF(self, line):
+      return True
+
+   def emptyline(self):
+      print self.prompt
+
    def do_quit(self, arg):
       'Quit the shell'
       sys.exit(0)
