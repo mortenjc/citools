@@ -1,0 +1,13 @@
+#!/bin/bash
+
+function test2()
+{
+docker run \
+--name bkwiki \
+-p 8080:80 \
+--link bkmysql:mysql \
+-e MYSQL_ROOT_PASSWORD=gylle \
+-d synctree/mediawiki 
+}
+
+test2

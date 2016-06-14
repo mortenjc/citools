@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker run --name bkmysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=gylle -d mysql:5.7
+
