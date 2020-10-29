@@ -91,19 +91,21 @@ class AWSShell(cmd.Cmd):
 #
     def do_show_our_instances(self, line):
         'list all ec2 our instances'
-        query="\'Reservations[*].Instances[*].{Id:InstanceId,Ip:PublicIpAddress,Key:KeyName,Type:InstanceType,Image:ImageId,Time:LaunchTime,State:State.Name}\'"
+        query="\'Reservations[*].Instances[*].{" + \
+          "Id:InstanceId,Ip:PublicIpAddress,Key:KeyName,Type:InstanceType," + \
+          "Image:ImageId,Time:LaunchTime,State:State.Name}\'"
         mycmd = "aws ec2 describe-instances --output json --query " + query
+
         js = json.loads(os.popen(mycmd).read())
-        print(js)
         fmt = "{0:20} {1:16} {2:16} {3:15} {4:25} {5:30} {6:15}"
         print(fmt.format("Instance Id", "Ip Address", "Key", "Instance Type", "Image Id", "Launch time", "State"))
         for entries in js:
-            for entry in entries:
-                if (entry['Key'] is None):
-                    entry['Key'] = 'None'
-                if (entry['Ip'] is None):
-                    entry['Ip'] = 'None'
-                print(fmt.format(entry['Id'], entry['Ip'], entry['Key'], entry['Type'], entry['Image'], entry['Time'], entry['State']))
+            for e in entries:
+                if (e['Key'] is None):
+                    e['Key'] = 'None'
+                if (e['Ip'] is None):
+                    e['Ip'] = 'None'
+                print(fmt.format(e['Id'], e['Ip'], e['Key'], e['Type'], e['Image'], e['Time'], e['State']))
 
 
     def do_run_instance(self, line):
@@ -135,7 +137,8 @@ class AWSShell(cmd.Cmd):
 
 
     def do_terminate_all(self, line):
-        mycmd = "aws ec2 describe-instances --output json --query 'Reservations[*].Instances[*].{Id:InstanceId,Type:InstanceType,Image:ImageId,Time:LaunchTime,State:State.Name}'"
+        query = "\'Reservations[*].Instances[*].{Id:InstanceId}\'"
+        mycmd = "aws ec2 describe-instances --output json --query " + query
         js = json.loads(os.popen(mycmd).read())
         for entries in js:
             for entry in entries:
@@ -149,9 +152,9 @@ class AWSShell(cmd.Cmd):
         self.print_subnet(res)
 
 
-    def do_ssh(self, line):
-        'launch terminal and ssh into instance'
-        return
+    # def do_ssh(self, line):
+    #     'launch terminal and ssh into instance'
+    #     return
 
 
     def emptyline(self):
