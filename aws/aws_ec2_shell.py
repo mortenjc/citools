@@ -94,12 +94,15 @@ class AWSShell(cmd.Cmd):
         query="\'Reservations[*].Instances[*].{Id:InstanceId,Ip:PublicIpAddress,Key:KeyName,Type:InstanceType,Image:ImageId,Time:LaunchTime,State:State.Name}\'"
         mycmd = "aws ec2 describe-instances --output json --query " + query
         js = json.loads(os.popen(mycmd).read())
+        print(js)
         fmt = "{0:20} {1:16} {2:16} {3:15} {4:25} {5:30} {6:15}"
         print(fmt.format("Instance Id", "Ip Address", "Key", "Instance Type", "Image Id", "Launch time", "State"))
         for entries in js:
             for entry in entries:
                 if (entry['Key'] is None):
                     entry['Key'] = 'None'
+                if (entry['Ip'] is None):
+                    entry['Ip'] = 'None'
                 print(fmt.format(entry['Id'], entry['Ip'], entry['Key'], entry['Type'], entry['Image'], entry['Time'], entry['State']))
 
 
