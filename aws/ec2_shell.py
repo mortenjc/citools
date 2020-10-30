@@ -4,8 +4,8 @@ import cmd, os, sys, json
 import subprocess as sp
 
 class AWSShell(cmd.Cmd):
-    intro = "AWS  Shell"
-    prompt = '(awsshell) '
+    intro = "AWS Shell"
+    prompt = '(ec2) '
 
     def __init__(self):
         cmd.Cmd.__init__(self)
@@ -177,9 +177,9 @@ class AWSShell(cmd.Cmd):
         self.print_subnet(res)
 
 
-    # def do_ssh(self, line):
-    #     'launch terminal and ssh into instance'
-    #     return
+    def do_ssh(self, ipaddr):
+        'show ssh command to use for login'
+        print("ssh -i ~/Downloads/kp_mjc_work.pem ubuntu@{}".format(ipaddr))
 
 
     def emptyline(self):
