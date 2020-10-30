@@ -29,26 +29,35 @@ class awscommands():
 
 
     # do the aws command and return valid json or empty string
-    def aws_cmd(self, command):
-        #print(command)
+    def aws_sendcmd(self, command):
         popenarg = command.split()
-        #print(popenarg)
         p = sp.Popen(popenarg, stdout=sp.PIPE, stderr=sp.PIPE)
-        out, err = p.communicate()
+        out, err =  p.communicate()
         #print("out: {}".format(out))
         #print("err: {}".format(err))
+        return out, err
+
+    def aws_cmd_raw(self, command):
+        out, err = self.aws_sendcmd(command)
+        return out
+
+
+    def aws_cmd(self, command):
+        out, err = self.aws_sendcmd(command)
+
         if len(err) > 0:
-            print('aws command failed: {}'.format(popenarg[2]))
+            print('aws command failed: {}'.format(command.split()[2]))
             return ''
         if len(out) > 0:
             return json.loads(out)
         return ''
 
+
 #
 # Command implementations
 #
 
-# Security group commands
+# EC2 ecurity group commands
     def security_group_list(self):
         fmt="{0:25} {1:20} {2:60}"
         res = self.aws_cmd("aws ec2 describe-security-groups")
@@ -75,7 +84,7 @@ class awscommands():
         res = self.aws_cmd(command)
 
 
-# Instance commands
+# EC2 Instance commands
     def show_available_instance_types(self):
         query = "--query \'InstanceTypes[*].{Instance:InstanceType,Cores:VCpuInfo.DefaultCores,Threads:VCpuInfo.DefaultVCpus}\'"
         mycmd = "aws ec2 describe-instance-types --output json " + query
@@ -151,7 +160,48 @@ class awscommands():
         self.print_subnet(res)
 
 
+# S3 Commands
+    def bucket_list(self):
+        res = self.aws_cmd('aws s3api list-buckets')
+        if res != '':
+            for i in range(len(res['Buckets'])):
+                print("{}".format(res['Buckets'][i]['Name']))
+
+
+    def bucket_create(self, name):
+        command = "aws s3api create-bucket --acl private --bucket " + name
+        self.aws_cmd(command)
+
+
+    def bucket_delete(self, name):
+        command = "aws s3api delete-bucket --bucket " + name
+        self.aws_cmd(command)
+
+
+    def bucket_ls(self, name):
+        command = "aws s3 ls " + name
+        res = self.aws_cmd_raw(command)
+        print(res)
+
+
+    def bucket_rm(self, file):
+        command = "aws s3 rm " + file
+        self.aws_cmd_raw(command)
+
+
+    def bucket_cp(self, line):
+        src = line.split()[0]
+        dst = line.split()[1]
+        command = "aws s3 cp {} {}".format(src, dst)
+        self.aws_cmd_raw(command)
+
+
 if __name__ == '__main__':
+    print("# INSTANCES")
     awscommands().show_our_instances()
+    print("\n# SECURITY GROUPS")
     awscommands().security_group_list()
+    print("\n# SUBNETS")
     awscommands().subnet_show()
+    print("\n# BUCKETS")
+    awscommands().bucket_list()
