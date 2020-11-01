@@ -1,0 +1,5 @@
+[aws]
+key_dir: /mydir/Downloads
+key_pair: my_key_pair
+image: ami-0dba2cb6798deb6d8
+type: t1.micro

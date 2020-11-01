@@ -1,10 +1,11 @@
 #!/usr/local/bin/python3
 
-import cmd
+import cmd, os, configparser
 from awscommands import awscommands
+from os.path import expanduser
 
 class AWSShell(cmd.Cmd):
-    intro = "AWS Shell"
+    intro = "AWS EC2 Shell"
     prompt = '(ec2) '
     aws = awscommands()
 
@@ -45,7 +46,7 @@ class AWSShell(cmd.Cmd):
         self.aws.describe_instance_type(type)
 
 #
-# Kay pairs
+# Key pairs
 #
     def do_key_pair_list(self, unused):
         'describe (list) all key pairs'
@@ -88,7 +89,9 @@ class AWSShell(cmd.Cmd):
 
     def do_ssh(self, ipaddr):
         'show ssh command to use for login'
-        print("ssh -i ~/Downloads/kp_mjc_work.pem ubuntu@{}".format(ipaddr))
+        dir = os.path.join(self.aws.cfg.options['key_dir'], self.aws.cfg.options['key_pair'])
+        print("ssh -i {}.pem ubuntu@{}"\
+           .format(dir, ipaddr))
 
 
     def emptyline(self):

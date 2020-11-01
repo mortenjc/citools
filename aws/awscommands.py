@@ -1,31 +1,33 @@
 #!/usr/local/bin/python3
 
-import json, os
+import json, os, configparser
 import subprocess as sp
+from os.path import expanduser
+
+# Reads configuration from file or use reasonable default values
+class configuration:
+    def __init__(self):
+        self.options = {}
+        self.config = configparser.RawConfigParser()
+        self.config.read(os.path.join(expanduser("~"), ".awscfg"))
+        self._load('aws', 'image', 'ami-0dba2cb6798deb6d8')
+        self._load('aws', 'key_dir', '.')
+        self._load('aws', 'key_pair', 'my_key_pair')
+        self._load('aws', 'type', 't1.micro')
+
+    # load option or use defult value
+    def _load(self, group, opt, default):
+        if self.config.has_option(group, opt):
+            self.options[opt] = self.config.get(group, opt)
+        else:
+            self.options[opt] = default
+
 
 class awscommands():
-
+    cfg = configuration()
 #
 # Helper functions
 #
-    def print_subnet(self, js):
-        for i in range(len(js['Subnets'])):
-            id = js['Subnets'][i]['SubnetId']
-            ip = js['Subnets'][i]['CidrBlock']
-            print("{0:20} {1:20}".format(id, ip))
-
-
-    def print_instance_type(self, js):
-        e = js['InstanceTypes'][0]
-        print("Type: {}".format(e['InstanceType']))
-        print("Cpuinfo: {}".format(e['VCpuInfo']['DefaultVCpus']))
-        print("Memory: {} MB".format(e['MemoryInfo']['SizeInMiB']))
-        print("Network performance: {}".format(e['NetworkInfo']['NetworkPerformance']))
-
-    def print_instances(self, instances):
-        js = json.loads(instances)
-
-
     # do the aws command and return valid json or empty string
     def aws_sendcmd(self, command):
         popenarg = command.split()
@@ -95,10 +97,18 @@ class awscommands():
             print("{0:20} {1:3} {2:3}".format(entry['Instance'], entry['Cores'], entry['Threads']))
 
 
+    def _print_instance_type(self, js):
+        e = js['InstanceTypes'][0]
+        print("Type: {}".format(e['InstanceType']))
+        print("Cpuinfo: {}".format(e['VCpuInfo']['DefaultVCpus']))
+        print("Memory: {} MB".format(e['MemoryInfo']['SizeInMiB']))
+        print("Network performance: {}".format(e['NetworkInfo']['NetworkPerformance']))
+
+
     def describe_instance_type(self, type):
         mycmd = "aws ec2 describe-instance-types --output json --instance-types=" + type
         res = self.aws_cmd(mycmd)
-        self.print_instance_type(res)
+        self._print_instance_type(res)
 
 
     def show_our_instances(self):
@@ -121,8 +131,13 @@ class awscommands():
 
     def run_instance(self, type):
         if type=='':
-            type = 't1.micro'
-        command = "aws ec2 run-instances --key-name=kp_mjc_work --image-id=ami-0dba2cb6798deb6d8 --instance-type=" + type
+            type = self.cfg.options['type']
+
+        command = "aws ec2 run-instances --key-name={} --image-id={} --instance-type={}" \
+          .format(self.cfg.options['key_pair'], \
+                  self.cfg.options['image'], \
+                  type)
+
         js = self.aws_cmd(command)
 
 
@@ -153,20 +168,31 @@ class awscommands():
                 print(entry)
                 self.terminate_instance(entry['Id'])
 
+#
+# Subnets
+#
+    def _print_subnet(self, js):
+        for i in range(len(js['Subnets'])):
+            id = js['Subnets'][i]['SubnetId']
+            ip = js['Subnets'][i]['CidrBlock']
+            print("{0:20} {1:20}".format(id, ip))
+
 
     def subnet_show(self):
         res = self.aws_cmd('aws ec2 describe-subnets')
-        self.print_subnet(res)
+        self._print_subnet(res)
 
 # Keys
-    def print_key_pairs(self, keys):
+    def _print_key_pairs(self, keys):
         for i in range(len(keys['KeyPairs'])):
             kp = keys['KeyPairs'][i]
             print("{0:25}{1:20}{2:50}".format(kp['KeyPairId'], kp['KeyName'], kp['KeyFingerprint']))
 
+
     def keypair_describe(self):
         res = self.aws_cmd('aws ec2 describe-key-pairs')
-        self.print_key_pairs(res)
+        self._print_key_pairs(res)
+
 
     def keypair_create(self, newkp):
         res = self.aws_cmd('aws ec2 create-key-pair --key-name ' + newkp)
