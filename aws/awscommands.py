@@ -14,15 +14,13 @@ class awscommands():
             ip = js['Subnets'][i]['CidrBlock']
             print("{0:20} {1:20}".format(id, ip))
 
+
     def print_instance_type(self, js):
-        type = js['InstanceTypes'][0]['InstanceType']
-        threads = js['InstanceTypes'][0]['VCpuInfo']['DefaultVCpus']
-        memsize = js['InstanceTypes'][0]['MemoryInfo']['SizeInMiB']
-        nwperf = js['InstanceTypes'][0]['NetworkInfo']['NetworkPerformance']
-        print("Type: {}".format(type))
-        print("Cpuinfo: {}".format(threads))
-        print("Memory: {} MB".format(memsize))
-        print("Network performance: {}".format(nwperf))
+        e = js['InstanceTypes'][0]
+        print("Type: {}".format(e['InstanceType']))
+        print("Cpuinfo: {}".format(e['VCpuInfo']['DefaultVCpus']))
+        print("Memory: {} MB".format(e['MemoryInfo']['SizeInMiB']))
+        print("Network performance: {}".format(e['NetworkInfo']['NetworkPerformance']))
 
     def print_instances(self, instances):
         js = json.loads(instances)
@@ -64,9 +62,10 @@ class awscommands():
         if (res != ''):
             print(fmt.format('GroupId', 'GroupName', 'Description'))
             for i in range(len(res['SecurityGroups'])):
-                id = res['SecurityGroups'][i]['GroupId']
-                name = res['SecurityGroups'][i]['GroupName']
-                desc = res['SecurityGroups'][i]['Description']
+                sg = res['SecurityGroups'][i]
+                id = sg['GroupId']
+                name = sg['GroupName']
+                desc = sg['Description']
                 print(fmt.format(id, name, desc))
 
 
@@ -159,6 +158,15 @@ class awscommands():
         res = self.aws_cmd('aws ec2 describe-subnets')
         self.print_subnet(res)
 
+# Keys
+    def print_key_pairs(self, keys):
+        for i in range(len(keys['KeyPairs'])):
+            kp = keys['KeyPairs'][i]
+            print("{0:25}{1:20}{2:50}".format(kp['KeyPairId'], kp['KeyName'], kp['KeyFingerprint']))
+
+    def keypair_describe(self):
+        res = self.aws_cmd('aws ec2 describe-key-pairs')
+        self.print_key_pairs(res)
 
 # S3 Commands
     def bucket_list(self):
@@ -169,31 +177,26 @@ class awscommands():
 
 
     def bucket_create(self, name):
-        command = "aws s3api create-bucket --acl private --bucket " + name
-        self.aws_cmd(command)
+        self.aws_cmd("aws s3api create-bucket --acl private --bucket " + name)
 
 
     def bucket_delete(self, name):
-        command = "aws s3api delete-bucket --bucket " + name
-        self.aws_cmd(command)
+        self.aws_cmd("aws s3api delete-bucket --bucket " + name)
 
 
     def bucket_ls(self, name):
-        command = "aws s3 ls " + name
-        res = self.aws_cmd_raw(command)
+        res = self.aws_cmd_raw("aws s3 ls " + name)
         print(res)
 
 
     def bucket_rm(self, file):
-        command = "aws s3 rm " + file
-        self.aws_cmd_raw(command)
+        self.aws_cmd_raw("aws s3 rm " + file)
 
 
     def bucket_cp(self, line):
         src = line.split()[0]
         dst = line.split()[1]
-        command = "aws s3 cp {} {}".format(src, dst)
-        self.aws_cmd_raw(command)
+        self.aws_cmd_raw("aws s3 cp {} {}".format(src, dst))
 
 
 if __name__ == '__main__':
@@ -201,6 +204,8 @@ if __name__ == '__main__':
     awscommands().show_our_instances()
     print("\n# SECURITY GROUPS")
     awscommands().security_group_list()
+    print("\n# KEY PAIRS")
+    awscommands().keypair_describe()
     print("\n# SUBNETS")
     awscommands().subnet_show()
     print("\n# BUCKETS")
