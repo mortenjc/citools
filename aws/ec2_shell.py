@@ -47,9 +47,17 @@ class AWSShell(cmd.Cmd):
 #
 # Kay pairs
 #
-    def do_kp_list(self, unused):
+    def do_key_pair_list(self, unused):
         'describe (list) all key pairs'
         self.aws.keypair_describe()
+
+    def do_key_pair_create(self, newkp):
+        'create a key pair'
+        self.aws.keypair_create(newkp)
+
+    def do_key_pair_delete(self, kp):
+        'delete a key pair'
+        self.aws.keypair_delete(kp)
 
 #
 # Show, start, stop and delete instances

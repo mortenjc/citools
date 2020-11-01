@@ -168,6 +168,19 @@ class awscommands():
         res = self.aws_cmd('aws ec2 describe-key-pairs')
         self.print_key_pairs(res)
 
+    def keypair_create(self, newkp):
+        res = self.aws_cmd('aws ec2 create-key-pair --key-name ' + newkp)
+        if res != '':
+            print("new key id: {}".format(res['KeyPairId']))
+            f = open(newkp + '.pem', "a")
+            f.write(res['KeyMaterial'])
+            f.close()
+
+
+    def keypair_delete(self, kp):
+        res = self.aws_cmd('aws ec2 delete-key-pair --key-name ' + kp)
+        print(res)
+
 # S3 Commands
     def bucket_list(self):
         res = self.aws_cmd('aws s3api list-buckets')
