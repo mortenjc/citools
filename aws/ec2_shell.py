@@ -2,7 +2,6 @@
 
 import cmd, os, configparser
 from awscommands import awscommands
-from os.path import expanduser
 
 class AWSShell(cmd.Cmd):
     intro = "AWS EC2 Shell"
@@ -18,6 +17,10 @@ class AWSShell(cmd.Cmd):
     def do_EOF(self, unused):
         print()
         return True
+
+#
+# Security group
+#
 
     def do_sg_list(self, unused):
         'list all security groups'

@@ -3,7 +3,6 @@
 import cmd, sys, os
 from awscommands import awscommands
 
-
 class AWShell(cmd.Cmd):
    intro = "AWS Shell"
    prompt = '(s3) '
