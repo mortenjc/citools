@@ -223,3 +223,4 @@ if __name__ == '__main__':
     awscommands().subnet_show()
     print("\n# BUCKETS")
     awscommands().bucket_list()
+    print("=" * 100)
