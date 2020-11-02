@@ -93,9 +93,9 @@ class AWSShell(cmd.Cmd):
 #
 # Images
 #
-    def do_show_my_images(self, unused):
+    def do_show_our_images(self, unused):
         'list images I own'
-        self.aws.image_my_images()
+        self.aws.images_show_our()
 
     def do_image_create(self, line):
         'create image from instanceid and (optional) name'

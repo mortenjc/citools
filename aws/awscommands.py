@@ -211,7 +211,7 @@ class awscommands():
 #
 # Image commands
 #
-    def image_my_images(self):
+    def images_show_our(self):
         command = "aws ec2 describe-images --owners " + str(self.myawsid)
         res = self.aws_cmd(command)
         print(res)
@@ -264,8 +264,12 @@ class awscommands():
         print(res)
 
 if __name__ == '__main__':
+    print("# USER INFO")
+    awscommands().whoami()
     print("# INSTANCES")
     awscommands().show_our_instances()
+    print("# IMAGES")
+    awscommands().images_show_our()
     print("\n# SECURITY GROUPS")
     awscommands().security_group_list()
     print("\n# KEY PAIRS")
