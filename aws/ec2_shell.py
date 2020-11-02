@@ -90,6 +90,24 @@ class AWSShell(cmd.Cmd):
         'show available subnets'
         self.aws.subnet_show()
 
+#
+# Images
+#
+    def do_show_my_images(self, unused):
+        'list images I own'
+        self.aws.image_my_images()
+
+    def do_image_create(self, line):
+        'create image from instanceid and (optional) name'
+        self.aws.image_create(line)
+
+#
+# Other commands
+#
+    def do_whoami(self, unused):
+        'show account and user information'
+        self.aws.whoami()
+
     def do_ssh(self, ipaddr):
         'show ssh command to use for login'
         dir = os.path.join(self.aws.cfg.options['key_dir'], self.aws.cfg.options['key_pair'])

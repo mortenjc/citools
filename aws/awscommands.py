@@ -24,6 +24,7 @@ class configuration:
 
 
 class awscommands():
+    myawsid = -1
     cfg = configuration()
 #
 # Helper functions
@@ -207,6 +208,22 @@ class awscommands():
         res = self.aws_cmd('aws ec2 delete-key-pair --key-name ' + kp)
         print(res)
 
+#
+# Image commands
+#
+    def image_my_images(self):
+        command = "aws ec2 describe-images --owners " + str(self.myawsid)
+        res = self.aws_cmd(command)
+        print(res)
+
+    def image_create(self, line):
+        instid = line.split()[0]
+        name = 'from_instance_' + instid
+        command = "aws ec2 create-image --instance-id {} --name {}".format(instid, name)
+        res = self.aws_cmd(command)
+        print(res)
+
+
 # S3 Commands
     def bucket_list(self):
         res = self.aws_cmd('aws s3api list-buckets')
@@ -237,6 +254,14 @@ class awscommands():
         dst = line.split()[1]
         self.aws_cmd_raw("aws s3 cp {} {}".format(src, dst))
 
+#
+# Misc
+#
+    def whoami(self):
+        command = "aws sts get-caller-identity"
+        res = self.aws_cmd(command)
+        self.myawsid=res['Account']
+        print(res)
 
 if __name__ == '__main__':
     print("# INSTANCES")
